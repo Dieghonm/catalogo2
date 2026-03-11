@@ -1,0 +1,21 @@
+[
+  {
+    "id": "lider",
+    "nome": "Líder",
+    "logo": "https://res.cloudinary.com/dfkebb4ds/image/upload/v1773086218/logo-lider_sjcaxz.png",
+    "icone": "🏺",
+    "cor": "#D4572A",
+    "arquivos": ["lider.xlsx","lider_fandom.xlsx"],
+    "pedidoMinimo": 1500
+  },
+  {
+    "id": "biemme",
+    "nome": "Biemme",
+    "logo": "https://biemme.com.br/wp-content/uploads/2022/05/logo-biemme-vertical.png",
+    "icone": "🏺",
+    "cor": "#D4572A",
+    "arquivos": ["biemme.xlsx"],
+    "pedidoMinimo": 5000
+  }
+]
+
