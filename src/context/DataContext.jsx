@@ -28,7 +28,7 @@ export const DataProvider = ({ children }) => {
   }
 
   async function carregarTodosJson(fabricas) {
-    const resultado      = {}
+    const resultado       = {}
     const todasCategorias = new Set()
 
     await Promise.all(
@@ -37,9 +37,8 @@ export const DataProvider = ({ children }) => {
 
         await Promise.all(
           fabrica.arquivos.map(async arquivo => {
-            // Troca a extensão .xlsx por .json
             const nomeJson = arquivo.replace(/\.xlsx$/i, '.json')
-            const url      = `${import.meta.env.BASE_URL}data/fabricas/${nomeJson}`
+            const url      = `${import.meta.env.BASE_URL}json/${nomeJson}`
 
             try {
               const res = await fetch(url)
@@ -48,11 +47,9 @@ export const DataProvider = ({ children }) => {
                 return
               }
 
-              // JSON já é array de arrays — mesmo formato do antigo XLSX.sheet_to_json
-              const linhas = await res.json()
+              const linhas          = await res.json()
               const linhasFiltradas = linhas.filter(l => Array.isArray(l) && l.length >= 2)
 
-              // Extrai categorias do cabeçalho
               const cabecalho = linhasFiltradas[0] ?? []
               const idxCat    = cabecalho.findIndex(col =>
                 typeof col === 'string' && /categoria|tipo|classe/i.test(col.trim())

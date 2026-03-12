@@ -3,7 +3,7 @@ name: converter-xlsx
 on:
   push:
     paths:
-      - 'xlsx/**'
+      - 'public/fabricas/**'
 
 jobs:
   convert:
@@ -29,6 +29,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add public/data/fabricas/*.json
+          git add public/json/*.json
           git commit -m "auto: converte XLSX → JSON [skip ci]" || echo "sem alterações"
           git push
