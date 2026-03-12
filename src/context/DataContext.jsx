@@ -50,6 +50,7 @@ export const DataProvider = ({ children }) => {
               const linhas          = await res.json()
               const linhasFiltradas = linhas.filter(l => Array.isArray(l) && l.length >= 2)
 
+              // Extrai categorias pelo cabeçalho (coluna com nome categoria/tipo/classe)
               const cabecalho = linhasFiltradas[0] ?? []
               const idxCat    = cabecalho.findIndex(col =>
                 typeof col === 'string' && /categoria|tipo|classe/i.test(col.trim())
@@ -74,8 +75,25 @@ export const DataProvider = ({ children }) => {
     setCategorias([...todasCategorias].sort())
   }
 
+  // Conta produtos de uma categoria específica (ou de todas se cat === null)
+  function contarPorCategoria(cat) {
+    return Object.values(fabricasData).reduce((total, arquivos) => {
+      return total + Object.values(arquivos).reduce((s, linhas) => {
+        const arr       = Array.isArray(linhas) ? linhas : []
+        const cabecalho = arr[0] ?? []
+        const idxCat    = cabecalho.findIndex(col =>
+          typeof col === 'string' && /categoria|tipo|classe/i.test(col.trim())
+        )
+        const linhasDados = arr.slice(1)
+        if (cat === null) return s + linhasDados.length
+        if (idxCat < 0)   return s
+        return s + linhasDados.filter(l => String(l[idxCat] ?? '').trim() === cat).length
+      }, 0)
+    }, 0)
+  }
+
   return (
-    <DataContext.Provider value={{ listaFabricas, fabricasData, categorias }}>
+    <DataContext.Provider value={{ listaFabricas, fabricasData, categorias, contarPorCategoria }}>
       {children}
     </DataContext.Provider>
   )
