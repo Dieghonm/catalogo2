@@ -1,6 +1,7 @@
 name: converter-xlsx
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'public/fabricas/**'
