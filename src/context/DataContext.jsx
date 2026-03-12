@@ -1,13 +1,11 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
-import * as XLSX from 'xlsx'
 
 const DataContext = createContext(null)
 
 export const DataProvider = ({ children }) => {
-
   const [listaFabricas, setListaFabricas] = useState([])
-  const [fabricasData, setFabricasData] = useState({})
-  const [categorias, setCategorias] = useState([])
+  const [fabricasData, setFabricasData]   = useState({})
+  const [categorias, setCategorias]       = useState([])
 
   const carregou = useRef(false)
 
@@ -19,54 +17,62 @@ export const DataProvider = ({ children }) => {
 
   async function carregarFabricas() {
     try {
-      const response = await fetch('fabricas.json')
-      if (!response.ok) return
-      const fabricas = await response.json()
+      const res = await fetch(`${import.meta.env.BASE_URL}fabricas.json`)
+      if (!res.ok) return
+      const fabricas = await res.json()
       setListaFabricas(fabricas)
-
-      await carregarTodosXlsx(fabricas)
-    } catch (error) {
-      console.log('Erro ao carregar fabricas:', error)
+      await carregarTodosJson(fabricas)
+    } catch (err) {
+      console.error('Erro ao carregar fabricas.json:', err)
     }
   }
 
-  async function carregarTodosXlsx(fabricas) {
-    const resultado = {}
+  async function carregarTodosJson(fabricas) {
+    const resultado      = {}
     const todasCategorias = new Set()
 
     await Promise.all(
       fabricas.map(async fabrica => {
         resultado[fabrica.id] = {}
+
         await Promise.all(
           fabrica.arquivos.map(async arquivo => {
+            // Troca a extensão .xlsx por .json
+            const nomeJson = arquivo.replace(/\.xlsx$/i, '.json')
+            const url      = `${import.meta.env.BASE_URL}data/fabricas/${nomeJson}`
 
             try {
-              const response = await fetch(`${import.meta.env.BASE_URL}data/fabricas/${arquivo}`)
-              if (!response.ok) return
-              const buffer = await response.arrayBuffer()
-              const workbook = XLSX.read(buffer, { type: 'array' })
-              const sheet = workbook.Sheets[workbook.SheetNames[0]]
-              const linhas = XLSX.utils.sheet_to_json(sheet, { header: 1 })
+              const res = await fetch(url)
+              if (!res.ok) {
+                console.warn(`JSON não encontrado: ${url}`)
+                return
+              }
+
+              // JSON já é array de arrays — mesmo formato do antigo XLSX.sheet_to_json
+              const linhas = await res.json()
               const linhasFiltradas = linhas.filter(l => Array.isArray(l) && l.length >= 2)
+
+              // Extrai categorias do cabeçalho
               const cabecalho = linhasFiltradas[0] ?? []
-              const indiceCategoria = cabecalho.findIndex(col =>
+              const idxCat    = cabecalho.findIndex(col =>
                 typeof col === 'string' && /categoria|tipo|classe/i.test(col.trim())
               )
-
-              if (indiceCategoria >= 0) {
+              if (idxCat >= 0) {
                 linhasFiltradas.slice(1).forEach(linha => {
-                  const valor = linha[indiceCategoria]
-                  if (valor) todasCategorias.add(String(valor).trim())
+                  const val = linha[idxCat]
+                  if (val) todasCategorias.add(String(val).trim())
                 })
               }
+
               resultado[fabrica.id][arquivo] = linhasFiltradas
-            } catch (error) {
-              console.log(`Erro ao carregar ${arquivo}:`, error)
+            } catch (err) {
+              console.error(`Erro ao carregar ${nomeJson}:`, err)
             }
           })
         )
       })
     )
+
     setFabricasData(resultado)
     setCategorias([...todasCategorias].sort())
   }
