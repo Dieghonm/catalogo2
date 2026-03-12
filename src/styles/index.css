@@ -3,6 +3,7 @@
    ============================================= */
 @import './variables.css';
 @import './components/Header.css';
+@import './pages/Home.css';
 /* @import './Header.css';
 @import './Home.css';
 @import './Catalogo.css';
