@@ -49,7 +49,7 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
           <label className="filter-label filter-label-toggle">
             <span className="toggle-text">⭐ Apenas destaques</span>
             <div
-              className={`toggle-switch ${filtros.apenasDestaques ? 'on' : 'off'}`}
+              className={`toggle-switch ${filtros.apenasDestaques ? 'on' : ''}`}
               onClick={() => set('apenasDestaques', !filtros.apenasDestaques)}
             >
               <div className="toggle-knob" />
@@ -59,7 +59,7 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
 
         {/* Categorias */}
         {categorias.length > 0 && (
-          <GrupoFiltro titulo="Categorias">
+          <GrupoFiltro titulo="Categoria">
             {categorias.map(cat => (
               <label key={cat} className="filter-label">
                 <input
@@ -67,7 +67,7 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
                   checked={filtros.categorias.includes(cat)}
                   onChange={() => toggle('categorias', cat)}
                 />
-                <span>{cat}</span>
+                {cat}
               </label>
             ))}
           </GrupoFiltro>
@@ -75,7 +75,7 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
 
         {/* Fábricas */}
         {!ocultarFabricas && FABRICAS.length > 0 && (
-          <GrupoFiltro titulo="Fábricas" defaultOpen={false}>
+          <GrupoFiltro titulo="Fábrica" defaultOpen={false}>
             {FABRICAS.map(fab => (
               <label key={fab.id} className="filter-label">
                 <input
@@ -83,7 +83,7 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
                   checked={filtros.fabricas.includes(fab.id)}
                   onChange={() => toggle('fabricas', fab.id)}
                 />
-                <span>{fab.nome}</span>
+                {fab.nome}
               </label>
             ))}
           </GrupoFiltro>
@@ -91,27 +91,28 @@ export default function Filtros({ filtros, setFiltros, categorias = [], ocultarF
 
         {/* Preço */}
         <GrupoFiltro titulo="Preço" defaultOpen={false}>
-          <p className="filter-price-range">R$ {globalMin} — R$ {globalMax}</p>
-          <div className="filter-price-inputs">
-            <input
-              type="number"
-              placeholder="Mín"
-              value={filtros.precoMin}
-              onChange={e => set('precoMin', e.target.value)}
-              className="price-input"
-              min={globalMin}
-              max={globalMax}
-            />
-            <span>—</span>
-            <input
-              type="number"
-              placeholder="Máx"
-              value={filtros.precoMax}
-              onChange={e => set('precoMax', e.target.value)}
-              className="price-input"
-              min={globalMin}
-              max={globalMax}
-            />
+          <div className="preco-range">
+            <div className="preco-input-wrap">
+              <span>R$</span>
+              <input
+                type="number"
+                placeholder={globalMin}
+                value={filtros.precoMin}
+                onChange={e => set('precoMin', e.target.value)}
+                min={0}
+              />
+            </div>
+            <span className="preco-sep">–</span>
+            <div className="preco-input-wrap">
+              <span>R$</span>
+              <input
+                type="number"
+                placeholder={globalMax}
+                value={filtros.precoMax}
+                onChange={e => set('precoMax', e.target.value)}
+                min={0}
+              />
+            </div>
           </div>
         </GrupoFiltro>
 

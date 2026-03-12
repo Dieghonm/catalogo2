@@ -1,19 +1,10 @@
 import { Link } from 'react-router-dom'
-import { useData } from '../context/DataContext'
+import { useData } from '../context'
 
 const LOGO = 'https://res.cloudinary.com/dfkebb4ds/image/upload/v1773094598/Captura_de_tela_de_2026-03-09_19-11-03_agakbo.png'
 
 export default function Home() {
-  const { listaFabricas, fabricasData, categorias, contarPorCategoria } = useData()
-
-  const totalProdutos = listaFabricas.reduce((acc, fab) => {
-    const arquivos = fabricasData[fab.id] ?? {}
-    const linhas = Object.values(arquivos).reduce((s, rows) => {
-      const arr = Array.isArray(rows) ? rows : []
-      return s + Math.max(0, arr.length - 1)
-    }, 0)
-    return acc + linhas
-  }, 0)
+  const { listaFabricas, TODOS_PRODUTOS, categorias, contarPorCategoria, getFabrica } = useData()
 
   return (
     <div className="page-home">
@@ -26,7 +17,7 @@ export default function Home() {
         <div className="hero-text">
           <p className="hero-sub">Bem-vindo ao nosso catálogo</p>
           <div className="hero-stats">
-            <div><strong>{totalProdutos}</strong><span>Produtos</span></div>
+            <div><strong>{TODOS_PRODUTOS.length}</strong><span>Produtos</span></div>
             <div><strong>{listaFabricas.length}</strong><span>Fábricas</span></div>
           </div>
         </div>
@@ -40,12 +31,7 @@ export default function Home() {
         </div>
         <div className="fabricas-grid">
           {listaFabricas.map(fab => {
-            const arquivos    = fabricasData[fab.id] ?? {}
-            const qtdProdutos = Object.values(arquivos).reduce((s, rows) => {
-              const arr = Array.isArray(rows) ? rows : []
-              return s + Math.max(0, arr.length - 1)
-            }, 0)
-
+            const qtdProdutos = TODOS_PRODUTOS.filter(p => p.fabricaId === fab.id).length
             return (
               <Link
                 key={fab.id}
@@ -103,9 +89,3 @@ export default function Home() {
     </div>
   )
 }
-
-
-
-
-
-
