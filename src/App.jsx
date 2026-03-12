@@ -11,6 +11,7 @@ import Home from './pages/Home'
 // import Checkout from './pages/Checkout'
 import './styles/index.css'
 import { DataProvider } from './context/DataContext'
+import Catalogo from './pages/Catalogo'
 
 export default function App() {
   const [search, setSearch] = useState('')
@@ -24,8 +25,8 @@ export default function App() {
           <div className="app-body">
             <Routes>
               <Route path="/"                         element={<Home />} />
-              {/* <Route path="/catalogo"                 element={<Catalogo search={search} />} /> */}
-              {/* <Route path="/fabrica/:fabricaId"       element={<Catalogo search={search} />} /> */}
+              <Route path="/catalogo"                 element={<Catalogo search={search} />} />
+              <Route path="/fabrica/:fabricaId"       element={<Catalogo search={search} />} />
               {/* <Route path="/produto/:fabricaId/:referencia" element={<Produto />} /> */}
               {/* <Route path="/carrinho"                 element={<Carrinho />} /> */}
               {/* <Route path="/checkout"                 element={<Checkout />} /> */}
